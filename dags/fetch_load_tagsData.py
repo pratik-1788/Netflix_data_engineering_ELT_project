@@ -19,6 +19,10 @@ def load_raw_full_tag():
                 
                 hook = SnowflakeHook(snowflake_conn_id='snowflake_conn')
                 sql="""
+                        
+                        USE WAREHOUSE TRANSFORMING;
+                        USE DATABASE netflix_database;
+                        USE SCHEMA staging;
                         copy into netflix_database.staging.tags
                         from @netflix_database.staging.netflixstage/tags
                         FILE_FORMAT = (
