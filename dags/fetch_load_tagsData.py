@@ -23,7 +23,7 @@ def notify_failure(context):
 
 
 @dag(
-    start_date=datetime(2024, 1, 1),
+    start_date=datetime(2026, 1, 1),
     schedule=None,
     catchup=False,
     on_failure_callback=notify_failure
@@ -70,11 +70,11 @@ def load_raw_full_Tag():
 
     @task
     def send_consolidated_mail(count):
-        subject = f"✅ Task Successfully Completed - Rows Loaded: {count}"
+        subject = f"✅ Task Successfully Completed "
         body = f"""
                 All tasks completed successfully.<br>
                 Table: Tag<br>
-                Rows 
+                Rows Loaded: {count} 
                 """
 
         send_email(
