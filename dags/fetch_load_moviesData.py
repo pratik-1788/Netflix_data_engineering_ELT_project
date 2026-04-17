@@ -31,7 +31,7 @@ def load_raw_full_movies():
     @task(on_failure_callback=notify_failure)
     def create_table():
         hook=SnowflakeHook(snowflake_conn_id='snowflake_conn')
-        sql="""create or replace table netflix_database.staging.movies(
+        sql="""create or replace table netflix_raw_database.raw.movies(
                 movieId int,
                 title varchar,
                 genres varchar
@@ -43,11 +43,11 @@ def load_raw_full_movies():
         hook=SnowflakeHook(snowflake_conn_id='snowflake_conn')
         sql="""
             USE WAREHOUSE TRANSFORMING;
-            USE DATABASE netflix_database;
-            USE SCHEMA staging;     
+            USE DATABASE netflix_raw_database;
+            USE SCHEMA raw;     
 
-            copy into netflix_database.staging.movies
-            from @netflix_database.staging.netflixstage/movies.csv
+            copy into netflix_raw_database.raw.movies
+            from @netflix_raw_database.raw.netflixstage/movies.csv
             FILE_FORMAT=(
             TYPE =CSV 
             FIELD_DELIMITER=','
@@ -55,7 +55,7 @@ def load_raw_full_movies():
             )
             ON_ERROR='CONTINUE';"""
         hook.run(sql) 
-        count=hook.get_records("select count(*) from netflix_database.staging.movies;")[0][0]
+        count=hook.get_records("select count(*) from netflix_raw_database.raw.movies;")[0][0]
         return count
     
     @task

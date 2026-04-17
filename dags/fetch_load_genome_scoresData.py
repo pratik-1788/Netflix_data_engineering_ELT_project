@@ -31,7 +31,7 @@ def load_raw_full_genome_scores():
     @task(on_failure_callback=notify_failure)
     def create_table():
         hook=SnowflakeHook(snowflake_conn_id='snowflake_conn')
-        sql="""create table netflix_database.staging.genome_scores(
+        sql="""create table netflix_raw_database.raw.genome_scores(
                 movieId int,
                 tagId int,
                 relevance float
@@ -43,11 +43,11 @@ def load_raw_full_genome_scores():
         hook=SnowflakeHook(snowflake_conn_id='snowflake_conn')
         sql="""
             USE WAREHOUSE TRANSFORMING;
-            USE DATABASE netflix_database;
-            USE SCHEMA staging;     
+            USE DATABASE netflix_raw_database;
+            USE SCHEMA raw;     
 
-            copy into netflix_database.staging.genome_scores
-            from @netflix_database.staging.netflixstage/genome-scores.csv
+            copy into netflix_raw_database.raw.genome_scores
+            from @netflix_raw_database.raw.netflixstage/genome-scores.csv
             FILE_FORMAT=(
             TYPE =CSV 
             FIELD_DELIMITER=','
@@ -55,7 +55,7 @@ def load_raw_full_genome_scores():
             )
             ON_ERROR='CONTINUE';"""
         hook.run(sql) 
-        count=hook.get_records("select count(*) from netflix_database.staging.genome_scores;")[0][0]
+        count=hook.get_records("select count(*) from netflix_raw_database.raw.genome_scores;")[0][0]
         return count
     
     @task
