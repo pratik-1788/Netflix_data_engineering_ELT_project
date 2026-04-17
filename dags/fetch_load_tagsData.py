@@ -33,7 +33,7 @@ def load_raw_full_Tag():
     @task(on_failure_callback=notify_failure)
     def create_table():
         hook = SnowflakeHook(snowflake_conn_id='snowflake_conn')
-        sql = """create or replace table netflix_database.staging.tags(
+        sql = """create or replace table netflix_raw_database.raw.tags(
                     userId int,
                     movieId int,
                     tag varchar,
@@ -47,11 +47,11 @@ def load_raw_full_Tag():
         hook = SnowflakeHook(snowflake_conn_id='snowflake_conn')
         sql = """
                 USE WAREHOUSE TRANSFORMING;
-                USE DATABASE netflix_database;
-                USE SCHEMA staging;
+                USE DATABASE netflix_raw_database;
+                USE SCHEMA raw;
 
-                copy into netflix_database.staging.tags
-                from @netflix_database.staging.netflixstage/tags
+                copy into netflix_raw_database.raw.tags
+                from @netflix_raw_database.raw.netflixstage/tags
                 FILE_FORMAT = (
                     TYPE = CSV 
                     FIELD_DELIMITER = ','
@@ -62,7 +62,7 @@ def load_raw_full_Tag():
         hook.run(sql)
 
         count = hook.get_records(
-            "select count(*) from netflix_database.staging.tags"
+            "select count(*) from netflix_raw_database.raw.tags"
         )[0][0]
 
         print(count)
