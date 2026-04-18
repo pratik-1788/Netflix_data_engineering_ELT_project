@@ -1,0 +1,23 @@
+models:
+  - name: dim_users
+    columns:
+      - name: user_id
+        tests:
+          - not_null
+          - unique
+
+  - name: dim_movies
+    columns:
+      - name: movie_id
+        tests:
+          - not_null
+          - unique
+
+  - name: fct_ratings
+    columns:
+      - name: user_id
+        tests:
+          - not_null
+      - name: movie_id
+        tests:
+          - not_null
